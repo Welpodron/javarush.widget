@@ -15,19 +15,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.set = exports.get = void 0;
 const promises_1 = __importDefault(require("fs/promises"));
 const loger_1 = require("../loger");
-const get = ({ cachePath }) => __awaiter(void 0, void 0, void 0, function* () {
+const path_1 = __importDefault(require("path"));
+const CACHE_PATH = "./cache.cache";
+const get = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        (0, loger_1.log)({ message: `Поиск кеша по пути: ${cachePath}`, code: "CACHE" });
+        const _path = path_1.default.resolve(CACHE_PATH);
+        (0, loger_1.log)({ message: `Поиск кеша по пути: ${_path}`, code: "CACHE" });
+        let cache = {
+            c: "",
+            e: 0,
+        };
         try {
-            yield promises_1.default.access(cachePath, promises_1.default.constants.F_OK);
+            cache = yield JSON.parse(yield promises_1.default.readFile(_path, "utf-8"));
         }
         catch (_) {
-            (0, loger_1.log)({ message: "Кеш не найден", code: "CACHE" });
+            (0, loger_1.log)({
+                message: "Кеш не найден, поврежден или не имеет доступа для чтения и записи",
+                code: "CACHE",
+            });
             return;
         }
-        const cache = yield JSON.parse(yield promises_1.default.readFile(cachePath, "utf-8"));
         if (!cache.c || !cache.e) {
-            (0, loger_1.log)({ message: "Кеш поврежден", code: "CACHE" });
+            (0, loger_1.log)({ message: "Кеш поврежден или не является валидным", code: "CACHE" });
             return;
         }
         const currentTime = new Date().getTime();
@@ -43,15 +52,16 @@ const get = ({ cachePath }) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.get = get;
-const set = ({ content, cachePath, duration = 24 * 60 * 60 * 1000, }) => __awaiter(void 0, void 0, void 0, function* () {
+const set = ({ content, duration = 24 * 60 * 60 * 1000, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        (0, loger_1.log)({ message: `Сохранение кеша по пути: ${cachePath}`, code: "CACHE" });
+        const _path = path_1.default.resolve(CACHE_PATH);
+        (0, loger_1.log)({ message: `Сохранение кеша по пути: ${_path}`, code: "CACHE" });
         const currentTime = new Date().getTime();
         const cache = {
             c: content,
             e: currentTime + duration,
         };
-        yield promises_1.default.writeFile(cachePath, JSON.stringify(cache));
+        yield promises_1.default.writeFile(_path, JSON.stringify(cache));
         (0, loger_1.log)({ message: "Кеш сохранен", code: "CACHE" });
         return content;
     }

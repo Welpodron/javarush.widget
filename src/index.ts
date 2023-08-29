@@ -8,16 +8,13 @@ import { parse as parseHTML } from "./parser";
 import { build as buildWidget } from "./builder";
 
 const PORT = process.env.PORT || 3000;
-const CACHE_PATH = "./cache";
 
 const app = express();
 
 app.use(cors());
 
 app.get("/widget", async (_, res) => {
-  let content = await getCache({
-    cachePath: CACHE_PATH,
-  });
+  let content = await getCache();
 
   if (content == null || !content.trim().length) {
     const html = await getHTML({
@@ -30,7 +27,6 @@ app.get("/widget", async (_, res) => {
 
     content = await setCache({
       content,
-      cachePath: CACHE_PATH,
     });
 
     if (content == null || !content.trim().length) {
@@ -38,6 +34,7 @@ app.get("/widget", async (_, res) => {
       return;
     }
   }
+
   res.writeHead(200, {
     "Content-Type": "image/svg+xml",
     "Content-Length": content.length,

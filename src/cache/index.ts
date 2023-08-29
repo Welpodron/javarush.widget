@@ -2,24 +2,34 @@ import fs from "fs/promises";
 
 import { log } from "../loger";
 
-export const get = async ({ cachePath }: { cachePath: string }) => {
+import path from "path";
+
+const CACHE_PATH = "./cache.cache";
+
+export const get = async () => {
   try {
-    log({ message: `Поиск кеша по пути: ${cachePath}`, code: "CACHE" });
+    const _path = path.resolve(CACHE_PATH);
+
+    log({ message: `Поиск кеша по пути: ${_path}`, code: "CACHE" });
+
+    let cache = {
+      c: "",
+      e: 0,
+    };
 
     try {
-      await fs.access(cachePath, fs.constants.F_OK);
+      cache = await JSON.parse(await fs.readFile(_path, "utf-8"));
     } catch (_) {
-      log({ message: "Кеш не найден", code: "CACHE" });
+      log({
+        message:
+          "Кеш не найден, поврежден или не имеет доступа для чтения и записи",
+        code: "CACHE",
+      });
       return;
     }
 
-    const cache: {
-      c: string;
-      e: number;
-    } = await JSON.parse(await fs.readFile(cachePath, "utf-8"));
-
     if (!cache.c || !cache.e) {
-      log({ message: "Кеш поврежден", code: "CACHE" });
+      log({ message: "Кеш поврежден или не является валидным", code: "CACHE" });
       return;
     }
 
@@ -39,15 +49,15 @@ export const get = async ({ cachePath }: { cachePath: string }) => {
 };
 export const set = async ({
   content,
-  cachePath,
   duration = 24 * 60 * 60 * 1000,
 }: {
   content: string;
-  cachePath: string;
   duration?: number;
 }) => {
   try {
-    log({ message: `Сохранение кеша по пути: ${cachePath}`, code: "CACHE" });
+    const _path = path.resolve(CACHE_PATH);
+
+    log({ message: `Сохранение кеша по пути: ${_path}`, code: "CACHE" });
 
     const currentTime = new Date().getTime();
 
@@ -56,7 +66,7 @@ export const set = async ({
       e: currentTime + duration,
     };
 
-    await fs.writeFile(cachePath, JSON.stringify(cache));
+    await fs.writeFile(_path, JSON.stringify(cache));
 
     log({ message: "Кеш сохранен", code: "CACHE" });
 

@@ -14,16 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.log = void 0;
 const promises_1 = __importDefault(require("fs/promises"));
+const path_1 = __importDefault(require("path"));
 const LOG_PATH = "./log.log";
 const log = ({ message, code = "INFO", }) => __awaiter(void 0, void 0, void 0, function* () {
     if (message == null || !message) {
         return;
     }
+    const _path = path_1.default.resolve(LOG_PATH);
     const date = new Date().toISOString();
     const log = `[${code}][${date}] ${message.toString()}\n`;
     console.log(log);
     try {
-        yield promises_1.default.appendFile(LOG_PATH, log);
+        yield promises_1.default.appendFile(_path, log);
     }
     catch (error) {
         console.log(error);

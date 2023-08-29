@@ -21,13 +21,10 @@ const request_1 = require("./request");
 const parser_1 = require("./parser");
 const builder_1 = require("./builder");
 const PORT = process.env.PORT || 3000;
-const CACHE_PATH = "./cache";
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.get("/widget", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let content = yield (0, cache_1.get)({
-        cachePath: CACHE_PATH,
-    });
+    let content = yield (0, cache_1.get)();
     if (content == null || !content.trim().length) {
         const html = yield (0, request_1.get)({
             url: process.env.URL || "",
@@ -36,7 +33,6 @@ app.get("/widget", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
         content = yield (0, builder_1.build)({ data });
         content = yield (0, cache_1.set)({
             content,
-            cachePath: CACHE_PATH,
         });
         if (content == null || !content.trim().length) {
             res.send("");
