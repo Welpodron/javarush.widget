@@ -14,48 +14,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.set = exports.get = void 0;
 const promises_1 = __importDefault(require("fs/promises"));
+const loger_1 = require("../loger");
 const get = ({ cachePath }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log("Поиск кеша по пути: ", cachePath);
+        (0, loger_1.log)({ message: `Поиск кеша по пути: ${cachePath}`, code: "CACHE" });
         try {
             yield promises_1.default.access(cachePath, promises_1.default.constants.F_OK);
         }
         catch (_) {
-            console.log("Кеш не найден");
+            (0, loger_1.log)({ message: "Кеш не найден", code: "CACHE" });
             return;
         }
         const cache = yield JSON.parse(yield promises_1.default.readFile(cachePath, "utf-8"));
         if (!cache.c || !cache.e) {
-            console.log("Кеш поврежден");
+            (0, loger_1.log)({ message: "Кеш поврежден", code: "CACHE" });
             return;
         }
         const currentTime = new Date().getTime();
         if (currentTime > cache.e) {
-            console.log("Кеш устарел");
+            (0, loger_1.log)({ message: "Кеш устарел", code: "CACHE" });
             return;
         }
-        console.log("Кеш найден");
+        (0, loger_1.log)({ message: "Кеш найден", code: "CACHE" });
         return cache.c;
     }
     catch (error) {
-        console.log(error);
+        (0, loger_1.log)({ message: error, code: "CACHE" });
     }
 });
 exports.get = get;
 const set = ({ content, cachePath, duration = 24 * 60 * 60 * 1000, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log("Сохранение кеша по пути: ", cachePath);
+        (0, loger_1.log)({ message: `Сохранение кеша по пути: ${cachePath}`, code: "CACHE" });
         const currentTime = new Date().getTime();
         const cache = {
             c: content,
             e: currentTime + duration,
         };
         yield promises_1.default.writeFile(cachePath, JSON.stringify(cache));
-        console.log("Кеш сохранен");
+        (0, loger_1.log)({ message: "Кеш сохранен", code: "CACHE" });
         return content;
     }
     catch (error) {
-        console.log(error);
+        (0, loger_1.log)({ message: error, code: "CACHE" });
     }
 });
 exports.set = set;

@@ -1,4 +1,5 @@
 import { parse as _parse } from "node-html-parser";
+import { log } from "../loger";
 
 export const parse = ({
   html,
@@ -10,7 +11,7 @@ export const parse = ({
   ratingSelector?: string;
 }) => {
   try {
-    console.log("Парсинг данных");
+    log({ message: "Парсинг данных", code: "PARSER" });
 
     const dom = _parse(html);
 
@@ -31,14 +32,14 @@ export const parse = ({
       rating = isNaN(parsed) ? 0 : parsed;
     }
 
-    console.log("Данные распарсены");
+    log({ message: "Данные распарсены", code: "PARSER" });
 
     return {
       level: level.toString(),
       rating: rating.toString(),
     };
   } catch (error) {
-    console.log(error);
+    log({ message: error, code: "PARSER" });
   }
 
   return {

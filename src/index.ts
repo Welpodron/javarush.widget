@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-
+import { log } from "./loger";
 import { get as getCache, set as setCache } from "./cache";
 import { get as getHTML } from "./request";
 import { parse as parseHTML } from "./parser";
@@ -46,5 +46,8 @@ app.get("/widget", async (_, res) => {
 });
 
 app.listen(PORT, async () => {
-  console.log(`Сервер запущен по адресу: http://localhost:${PORT}`);
+  log({
+    message: `Сервер запущен порт: ${PORT}`,
+    code: "SERVER",
+  });
 });

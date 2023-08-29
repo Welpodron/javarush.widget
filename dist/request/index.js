@@ -14,19 +14,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.get = void 0;
 const node_fetch_1 = __importDefault(require("node-fetch"));
+const loger_1 = require("../loger");
 const utils_1 = require("../utils");
 const get = ({ url, delay = 9500, tries = 3, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log("Получение данных по адресу: ", url);
+        (0, loger_1.log)({ message: `Получение данных по адресу: ${url}`, code: "REQUEST" });
         let response = yield (0, node_fetch_1.default)(url);
         if (response.ok && response.status === 200) {
-            console.log("Данные получены");
+            (0, loger_1.log)({ message: "Данные получены", code: "REQUEST" });
             return yield response.text();
         }
         throw new Error(`Не получилось получить ${url} Попытка: ${tries}`);
     }
     catch (error) {
-        console.log(error);
+        (0, loger_1.log)({ message: error, code: "REQUEST" });
         if (tries && tries > 0) {
             yield (0, utils_1.sleep)({ ms: delay });
             return (0, exports.get)({ url, delay, tries: tries - 1 });

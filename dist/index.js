@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const loger_1 = require("./loger");
 const cache_1 = require("./cache");
 const request_1 = require("./request");
 const parser_1 = require("./parser");
@@ -49,5 +50,8 @@ app.get("/widget", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.end(content);
 }));
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(`Сервер запущен по адресу: http://localhost:${PORT}`);
+    (0, loger_1.log)({
+        message: `Сервер запущен порт: ${PORT}`,
+        code: "SERVER",
+    });
 }));

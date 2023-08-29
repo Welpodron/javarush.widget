@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-
+import { log } from "../loger";
 import { sleep } from "../utils";
 
 export const get = async ({
@@ -12,18 +12,18 @@ export const get = async ({
   tries?: number;
 }): Promise<string> => {
   try {
-    console.log("Получение данных по адресу: ", url);
+    log({ message: `Получение данных по адресу: ${url}`, code: "REQUEST" });
 
     let response = await fetch(url);
 
     if (response.ok && response.status === 200) {
-      console.log("Данные получены");
+      log({ message: "Данные получены", code: "REQUEST" });
       return await response.text();
     }
 
     throw new Error(`Не получилось получить ${url} Попытка: ${tries}`);
   } catch (error) {
-    console.log(error);
+    log({ message: error, code: "REQUEST" });
 
     if (tries && tries > 0) {
       await sleep({ ms: delay });
