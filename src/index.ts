@@ -36,6 +36,7 @@ app.get("/widget", async (_, res) => {
   }
 
   res.writeHead(200, {
+    "Cache-Control": "no-cache",
     "Content-Type": "image/svg+xml",
     "Content-Length": content.length,
   });

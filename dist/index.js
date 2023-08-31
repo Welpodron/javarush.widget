@@ -40,6 +40,7 @@ app.get("/widget", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     res.writeHead(200, {
+        "Cache-Control": "no-cache",
         "Content-Type": "image/svg+xml",
         "Content-Length": content.length,
     });
